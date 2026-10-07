@@ -1,6 +1,8 @@
-# carCheck
+# AUTOPEEK
 
 MVP לחיפוש מידע ציבורי על רכב בישראל לפי מספר רישוי. נבנה ב־Next.js App Router ומבצע שאילתות ל־CKAN Datastore API של data.gov.il בצד השרת.
+
+כתובת האתר המיועדת: [autopeek.co.il](https://autopeek.co.il). חיבור הדומיין דורש פריסה והגדרות DNS נפרדות.
 
 ## הפעלה
 

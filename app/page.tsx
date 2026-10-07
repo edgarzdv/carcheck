@@ -17,7 +17,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
   const price = report?.prices[0] ?? null;
   const hasResult = Boolean(report && (vehicle || report.history || report.openRecalls.length || report.ownership.length));
   return <main>
-    <header className="topbar"><div className="topbarInner"><a className="brand" href="/"><span className="brandMark">C<span>✓</span></span><span>car<span className="brandAccent">Check</span></span></a><a className="topLink" href="#about">על המידע <span>↗</span></a></div></header>
+    <header className="topbar"><div className="topbarInner"><a className="brand" href="/" aria-label="AUTOPEEK — דף הבית"><span className="brandMark">A<span>•</span></span><span>AUTO<span className="brandAccent">PEEK</span></span></a><a className="topLink" href="#about">על המידע <span>↗</span></a></div></header>
     <div className="pageWrap">
       <section className="hero"><div className="eyebrow"><span className="liveDot"/> מידע ממשלתי פתוח · ישראל</div><h1>כל מה שצריך לדעת<br/><em>על הרכב, במספר אחד.</em></h1><p className="heroText">פרטי רכב, היסטוריית בעלות, נסועה, ריקולים ועוד — מתוך מאגרי משרד התחבורה, במקום אחד.</p>
         <form className="searchBox" action="/" method="get"><div className="searchInput"><span className="searchIcon">⌕</span><input name="plate" type="text" inputMode="numeric" pattern="[0-9\- ]{5,12}" maxLength={12} autoComplete="off" placeholder="הקלידו מספר רישוי" defaultValue={raw} aria-label="מספר רישוי" required/></div><button type="submit">בדיקת רכב <span>←</span></button></form>
@@ -44,7 +44,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
           </aside></div>
         </>}
       </div>}
-      <section id="about" className="about"><div><span className="eyebrow small">חשוב לדעת</span><h2>מידע ציבורי. החלטה מושכלת.</h2></div><div><p>carCheck מרכז מידע פתוח של משרד התחבורה. זמינות הרשומות תלויה בכיסוי ובעדכון של כל מאגר; הכיסוי העיקרי הוא רכבים פרטיים משנת 1996 ומסחריים עד 3.5 טון משנת 1998.</p><p>המידע אינו מהווה אישור רשמי על מצב הרכב, תקינותו או שוויו. לפני רכישה מומלץ לבצע בדיקה מקצועית ולאמת פרטים מול משרד התחבורה והיבואן.</p></div></section>
-    </div><footer><span>carCheck © 2026</span><span>מבוסס על נתונים פתוחים של <a href="https://data.gov.il" target="_blank" rel="noreferrer">data.gov.il ↗</a></span></footer>
+      <section id="about" className="about"><div><span className="eyebrow small">חשוב לדעת</span><h2>מידע ציבורי. החלטה מושכלת.</h2></div><div><p>AUTOPEEK מרכז מידע פתוח של משרד התחבורה. זמינות הרשומות תלויה בכיסוי ובעדכון של כל מאגר; הכיסוי העיקרי הוא רכבים פרטיים משנת 1996 ומסחריים עד 3.5 טון משנת 1998.</p><p>המידע אינו מהווה אישור רשמי על מצב הרכב, תקינותו או שוויו. לפני רכישה מומלץ לבצע בדיקה מקצועית ולאמת פרטים מול משרד התחבורה והיבואן.</p></div></section>
+    </div><footer><span>AUTOPEEK © 2026</span><span>מבוסס על נתונים פתוחים של <a href="https://data.gov.il" target="_blank" rel="noreferrer">data.gov.il ↗</a></span></footer>
   </main>;
 }
