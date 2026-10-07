@@ -1,5 +1,11 @@
 export type Row = Record<string, string | number | null>;
 export type SourceResult = { rows: Row[]; error: boolean };
+// Accept only a short Israeli plate number before making any upstream request.
+export function parsePlate(input: unknown): string | null {
+  if (typeof input !== 'string' || input.length > 12 || !/^[0-9][0-9 -]*$/.test(input)) return null;
+  const plate = input.replace(/[ -]/g, '');
+  return plate.length >= 5 && plate.length <= 8 ? plate : null;
+}
 const resources = {
   vehicles: '053cea08-09bc-40ec-8f7a-156f0677aff3', extra: '0866573c-40cd-4ca8-91d2-9dd2d7a492e5',
   history: '56063a99-8a3e-4ff4-912e-5966c0279bad', ownership: 'bb2355dc-9ec7-4f06-9c3f-3344672171da',
@@ -29,6 +35,7 @@ async function query(resourceId: string, filters: Record<string, number | string
 }
 export type VehicleReport = Awaited<ReturnType<typeof getVehicleReport>>;
 export async function getVehicleReport(plate: string) {
+  if (parsePlate(plate) !== plate) throw new Error('Invalid plate');
   const number = Number(plate);
   const [vehicle, extra, history, ownership, openRecalls, c1, c2, c3] = await Promise.all([
     query(resources.vehicles, { mispar_rechev: number }, 1), query(resources.extra, { mispar_rechev: number }, 1),

@@ -1,4 +1,4 @@
-import { date, getVehicleReport, sourceUrls, value, yesNo, type Row } from '@/lib/vehicles';
+import { date, getVehicleReport, parsePlate, sourceUrls, value, yesNo, type Row } from '@/lib/vehicles';
 
 function Cell({ label, children }: { label: string; children: React.ReactNode }) { return <div className="cell"><span>{label}</span><strong>{children}</strong></div>; }
 function Source({ href }: { href: string }) { return <a className="source" href={href} target="_blank" rel="noreferrer">למקור הנתונים ↗</a>; }
@@ -7,10 +7,11 @@ function Status({ error, found, empty = 'לא נמצא מידע במאגר זה'
 function Details({ row, fields }: { row: Row | null; fields: [string, string][] }) { return <div className="details">{fields.map(([key, label]) => <Cell key={key} label={label}>{value(row, key)}</Cell>)}</div>; }
 function fmtNumber(n: unknown) { return typeof n === 'number' ? new Intl.NumberFormat('he-IL').format(n) : n ? String(n) : 'לא זמין'; }
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ plate?: string }> }) {
-  const raw = (await searchParams).plate?.trim() ?? '';
-  const plate = raw.replace(/\D/g, '');
-  const invalid = raw.length > 0 && (plate.length < 5 || plate.length > 8);
+export default async function Home({ searchParams }: { searchParams: Promise<{ plate?: string | string[] }> }) {
+  const supplied = (await searchParams).plate;
+  const raw = typeof supplied === 'string' && supplied.length <= 12 ? supplied.trim() : '';
+  const plate = parsePlate(raw);
+  const invalid = supplied !== undefined && !plate;
   const report = plate && !invalid ? await getVehicleReport(plate) : null;
   const vehicle = report?.base ?? null;
   const model = report?.model[0] ?? null;
@@ -26,7 +27,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
       </section>
       {!report && <><div className="sectionLead"><span>מה אפשר לבדוק?</span><h2>תמונה מלאה יותר על הרכב</h2><p>חיפוש אחד מרכז נתונים ממספר מאגרים ממשלתיים.</p></div><div className="featureGrid"><div><span>▤</span><h3>פרטי הרכב</h3><p>יצרן, דגם, שנת ייצור, דלק, צבע, צמיגים ותוקף רישוי</p></div><div><span>◷</span><h3>היסטוריה ובעלות</h3><p>נסועה בטסט האחרון, שינויי מבנה ותאריכי בעלות</p></div><div><span>◈</span><h3>ריקולים וסטטוס</h3><p>קריאות שירות שלא בוצעו ומידע על ביטול סופי</p></div><div><span>⌁</span><h3>נתוני דגם</h3><p>מפרט ונתוני WLTP, לצד מחיר יבואן לרכב חדש</p></div></div></>}
       {report && <div className="results">
-        <div className="resultsHeader"><div><span className="eyebrow small">תוצאות הבדיקה</span><h2>{vehicle ? `${value(vehicle, 'tozeret_nm')} ${value(vehicle, 'kinuy_mishari')}` : 'בדיקת רכב'}</h2><p>מספר רישוי <b dir="ltr">{plate}</b> · נתונים ממאגרי משרד התחבורה</p></div><div className="plateBadge"><span>IL</span><strong dir="ltr">{plate}</strong></div></div>
+        <div className="resultsHeader"><div><span className="eyebrow small">תוצאות הבדיקה</span><h2>{vehicle ? `${value(vehicle, 'tozeret_nm')} ${value(vehicle, 'kinuy_mishari')}` : 'בדיקת רכב'}</h2><p>מספר רישוי <b dir="ltr">{plate}</b> · נתונים ממאגרי משרד התחבורה</p>{hasResult && <a className="downloadButton" href={`/api/report?plate=${encodeURIComponent(plate!)}`} download={`AUTOPEEK-${plate}.pdf`}>↓ הורדת דוח PDF</a>}</div><div className="plateBadge"><span>IL</span><strong dir="ltr">{plate}</strong></div></div>
         {!hasResult && <div className="card emptyState"><h2>לא נמצאו נתונים למספר הזה</h2><p>ייתכן שהרכב מחוץ לטווח הכיסוי של המאגרים, או שמספר הרישוי אינו נכון.</p></div>}
         {hasResult && <>
           {report.canceled && <div className="alert danger"><span>!</span><div><strong>נמצאה רשומה של ביטול סופי</strong><p>תאריך ביטול: {date(report.canceled.bitul_dt)}. יש לאמת סטטוס עדכני מול משרד התחבורה.</p></div></div>}
