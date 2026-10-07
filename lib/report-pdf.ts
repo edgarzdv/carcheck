@@ -55,10 +55,16 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
     field('שינוי צבע', yesNo(report.history.shnui_zeva_ind));
     field('שינוי צמיגים', yesNo(report.history.shinui_zmig_ind));
     note('הנסועה היא מדידה אחת מהטסט האחרון, לא היסטוריית טיפולים או רצף מדידות.');
-  } else note(report.errors.history ? 'מאגר ההיסטוריה לא היה זמין בעת הפקת הדוח.' : 'לא נמצאה רשומה במאגר ההיסטוריה.');
+  } else {
+    note(report.errors.history ? 'מאגר ההיסטוריה לא היה זמין בעת הפקת הדוח.' : 'לא פורסמה לרכב זה רשומה במאגר ההיסטוריה. אין לנו ממנו נתון נסועה או שינויי מבנה.');
+    if (report.base?.mivchan_acharon_dt) field('מועד טסט אחרון במאגר הרכב', date(report.base.mivchan_acharon_dt));
+  }
   heading('היסטוריית בעלות');
   if (report.ownership.length) [...report.ownership].sort((a,b) => Number(b.baalut_dt) - Number(a.baalut_dt)).forEach((row) => field(`החל מ־${date(row.baalut_dt)}`, value(row,'baalut')));
-  else note(report.errors.ownership ? 'מאגר הבעלויות לא היה זמין בעת הפקת הדוח.' : 'לא נמצאה היסטוריית בעלות.');
+  else {
+    note(report.errors.ownership ? 'מאגר הבעלויות לא היה זמין בעת הפקת הדוח.' : 'לא פורסמה לרכב זה רשומת היסטוריית בעלות. אין מכך להסיק שלא היו בעלים קודמים.');
+    if (report.base?.baalut) field('סוג בעלות נוכחית במאגר הרכב', value(report.base, 'baalut'));
+  }
   note('המאגר כולל סוגי בעלות ותאריכים בלבד, ללא שמות בעלים.');
   // Give this section room so its heading does not end a page on its own.
   blocks.push({ type: 'spacer', height: 65 });
