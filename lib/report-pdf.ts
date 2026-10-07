@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { createPdf, type DocumentBlock } from 'rtl-pdf';
-import { date, sourceUrls, value, yesNo, type VehicleReport, type Row } from './vehicles';
+import { date, value, yesNo, type VehicleReport, type Row } from './vehicles';
 
 const font = path.join(process.cwd(), 'assets/fonts/NotoSansHebrew-Medium.ttf');
 const ink = '#0c1831';
@@ -95,8 +95,8 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
     note('מחיר יבואן לרכב חדש אינו שווי שוק של רכב משומש.');
   }
   heading('מקורות והבהרות');
-  note('מקורות: מאגרי משרד התחבורה באתר data.gov.il - פרטי רכב, היסטוריית רכב פרטי, ריקולים שלא בוצעו, ביטול סופי, מפרט דגם WLTP ומחיר יבואן.');
-  [sourceUrls.vehicles, sourceUrls.history, sourceUrls.openRecalls, sourceUrls.canceled, sourceUrls.model, sourceUrls.prices].forEach((url) => text(url, 8, muted, 2));
-  note('הדוח מרכז מידע ציבורי כפי שנמצא בעת הפקתו. הוא אינו מסמך רשמי, בדיקת תקינות או אישור שווי. לפני רכישה יש לבצע בדיקה מקצועית ולאמת נתונים מול משרד התחבורה והיבואן.');
+  note('מקור הנתונים: מאגרי משרד התחבורה באתר data.gov.il.');
+  text('https://data.gov.il/he/organizations/ministry_of_transport', 8, muted, 4);
+  note('AUTOPEEK הוא שירות עצמאי, לא אתר ממשלתי. הדוח משקף מידע ציבורי כפי שהתקבל בעת הפקתו; הוא אינו מסמך רשמי, בדיקת תקינות או אישור שווי. היעדר רשומה אינו אישור להיעדר בעיה. לפני רכישה יש לבצע בדיקה מקצועית ולאמת נתונים מול הגורמים המוסמכים.');
   return createPdf({ fonts: { rtl: font }, metadata: { title: `AUTOPEEK - ${plate}`, author: 'AUTOPEEK', subject: 'דוח מידע ציבורי על רכב', language: 'he' }, page: { size: 'A4', margins: { top: 46, bottom: 46, left: 50, right: 50 } }, defaults: { direction: 'rtl', color: ink }, blocks });
 }
