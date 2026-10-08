@@ -22,7 +22,11 @@ export async function POST(request: Request) {
   if (!key || !to || !from) return reply(503);
 
   const origin = request.headers.get('origin');
-  if (!origin || origin !== new URL(request.url).origin) return reply(403);
+  // Netlify may expose an internal URL to the function even when the browser
+  // made the request on the custom domain. Compare against the configured
+  // public origin in production, and the request URL during local development.
+  const publicOrigin = process.env.SITE_URL ? new URL(process.env.SITE_URL).origin : new URL(request.url).origin;
+  if (!origin || origin !== publicOrigin) return reply(403);
   if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) return reply(415);
   if (Number(request.headers.get('content-length') || 0) > 5500) return reply(413);
 
