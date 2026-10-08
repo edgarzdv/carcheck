@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { createPdf, type DocumentBlock } from 'rtl-pdf';
-import { date, value, yesNo, type VehicleReport, type VehicleStatus, type Row } from './vehicles';
+import { date, disabledParkingTagStatus, groupOwnership, value, yesNo, type VehicleReport, type VehicleStatus, type Row } from './vehicles';
 
 const font = path.join(process.cwd(), 'assets/fonts/NotoSansHebrew-Medium.ttf');
 const ink = '#0c1831';
@@ -36,8 +36,9 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
   field('רישום הרכב', statusLabels[report.status]);
   field('תוקף רישוי במאגר', report.base?.tokef_dt ? date(report.base.tokef_dt) : 'לא זמין');
   field('נסועה בטסט האחרון', report.history?.kilometer_test_aharon != null ? `${value(report.history, 'kilometer_test_aharon')} ק״מ` : report.errors.history ? 'המאגר לא זמין' : 'לא פורסמה רשומה');
-  field('היסטוריית בעלות', report.ownership.length ? `${report.ownership.length} רשומות` : report.errors.ownership ? 'המאגר לא זמין' : 'לא פורסמה רשומה');
+  field('היסטוריית בעלות', report.ownership.length ? `${report.ownership.length} רשומות מקור` : report.errors.ownership ? 'המאגר לא זמין' : 'לא פורסמה רשומה');
   field('ריקולים שלא בוצעו', report.openRecalls.length ? `${report.openRecalls.length} רשומות` : report.errors.openRecalls ? 'המאגר לא זמין' : 'לא נמצאה רשומה');
+  field('תג חניה לנכה', disabledParkingTagStatus(report));
   note('זהו סיכום הרשומות שפורסמו במאגרים שנבדקו. היעדר מידע אינו אישור לתקינות או למצב משפטי של הרכב.');
   if (report.canceled) { heading('התראת סטטוס'); field('ביטול סופי', date(report.canceled.bitul_dt)); note('יש לאמת סטטוס עדכני מול משרד התחבורה.'); }
   else if (report.status === 'inactive') { heading('התראת סטטוס'); note('הרכב מופיע במאגר רכב לא פעיל. יש לאמת את מצב הרישוי העדכני מול משרד התחבורה.'); }
@@ -75,7 +76,11 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
     if (report.base?.mivchan_acharon_dt) field('מועד טסט אחרון במאגר הרכב', date(report.base.mivchan_acharon_dt));
   }
   heading('היסטוריית בעלות');
-  if (report.ownership.length) [...report.ownership].sort((a,b) => Number(b.baalut_dt) - Number(a.baalut_dt)).forEach((row) => field(`החל מ־${date(row.baalut_dt)}`, value(row,'baalut')));
+  const ownershipGroups = groupOwnership(report.ownership);
+  if (ownershipGroups.length) {
+    ownershipGroups.forEach((group) => field(`דווח לחודש ${date(group.month)}`, `${group.kind}${group.count > 1 ? ` (${group.count} רשומות זהות במקור)` : ''}`));
+    if (ownershipGroups.some(group => group.count > 1)) note('רשומות עם אותו חודש וסוג בעלות מוצגות יחד. לא ניתן לקבוע אם הן כפילויות טכניות או העברות נפרדות.');
+  }
   else {
     note(report.errors.ownership ? 'מאגר הבעלויות לא היה זמין בעת הפקת הדוח.' : 'לא פורסמה לרכב זה רשומת היסטוריית בעלות. אין מכך להסיק שלא היו בעלים קודמים.');
     if (report.base?.baalut) field('סוג בעלות נוכחית במאגר הרכב', value(report.base, 'baalut'));
@@ -91,6 +96,10 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
     field('תיאור התקלה', value(row,'TEUR_TAKALA'));
   });
   else note(report.errors.openRecalls ? 'מאגר הריקולים לא היה זמין בעת הפקת הדוח.' : 'לא נמצאה רשומה במאגר ריקולים שלא בוצעו. היעדר רשומה אינו אישור שאין ריקול אחר.');
+  heading('תג חניה לנכה');
+  field('רישום במאגר', disabledParkingTagStatus(report));
+  note(report.disabledParkingTag ? 'מספר הרישוי מופיע במאגר הרכבים המורשים לשאת תג חניה לנכה. התג אישי לבעל הזכאות ואינו חלק מהרכב הנמכר.' : report.errors.disabledParkingTag ? 'המאגר לא היה זמין בעת הפקת הדוח. לא ניתן לקבוע אם הרכב מופיע בו.' : 'לא נמצאה רשומה לפי מספר הרישוי במאגר שנבדק. אין בכך אישור שאין תג תקף.');
+  note('שיוך רכב לתג אינו מעיד על זהות בעל הרכב או על מצבו הרפואי.');
   heading('סטטוס ביטול סופי');
   field('סטטוס במאגר', report.canceled ? `ביטול סופי בתאריך ${date(report.canceled.bitul_dt)}` : report.errors.canceled ? 'המאגר לא היה זמין' : 'לא נמצאה רשומה במאגרים שנבדקו');
   if (report.model[0]) {

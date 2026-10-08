@@ -10,6 +10,7 @@ const resources = {
   vehicles: '053cea08-09bc-40ec-8f7a-156f0677aff3', extra: '0866573c-40cd-4ca8-91d2-9dd2d7a492e5',
   inactiveWithModel: 'f6efe89a-fb3d-43a4-bb61-9bf12a9b9099', inactiveWithoutModel: '6f6acd03-f351-4a8f-8ecf-df792f4f573a',
   history: '56063a99-8a3e-4ff4-912e-5966c0279bad', ownership: 'bb2355dc-9ec7-4f06-9c3f-3344672171da',
+  disabledParkingTags: 'c8b9f9c8-4612-4068-934f-d4acd2e3c06e',
   openRecalls: '36bf1404-0be4-49d2-82dc-2f1ead4a8b93', canceledRecent: '851ecab1-0622-4dbe-a6c7-f950cf82abf9',
   canceled2010: '4e6b9724-4c1e-43f0-909a-154d4cc4e046', canceled2000: 'ec8cbc34-72e1-4b69-9c48-22821ba0bd6c',
   model: '142afde2-6228-49f9-8a29-9b6c3a0cbe40', prices: '39f455bf-6db0-4926-859d-017f34eacbcb', announcements: '2c33523f-87aa-44ec-a736-edbb0a82975e',
@@ -19,6 +20,7 @@ export const sourceUrls = {
   inactiveWithModel: 'https://data.gov.il/he/datasets/ministry_of_transport/rechev_le_pail_with_degem',
   inactiveWithoutModel: 'https://data.gov.il/he/datasets/ministry_of_transport/rechev_le_pail_without-degem',
   history: 'https://data.gov.il/he/datasets/ministry_of_transport/shinui_mivne',
+  disabledParkingTags: 'https://data.gov.il/he/datasets/ministry_of_transport/rechev-tag-nachim',
   openRecalls: 'https://data.gov.il/he/datasets/ministry_of_transport/hagbalat_recall',
   canceled: 'https://data.gov.il/he/datasets/ministry_of_transport/reshev_bitul_sofi',
   model: 'https://data.gov.il/he/datasets/ministry_of_transport/degem-rechev-wltp',
@@ -41,10 +43,11 @@ export type VehicleStatus = 'active' | 'inactive' | 'canceled' | 'unknown' | 'un
 export async function getVehicleReport(plate: string) {
   if (parsePlate(plate) !== plate) throw new Error('Invalid plate');
   const number = Number(plate);
-  const [vehicle, extra, history, ownership, openRecalls, c1, c2, c3] = await Promise.all([
+  const [vehicle, extra, history, ownership, openRecalls, disabledParkingTags, c1, c2, c3] = await Promise.all([
     query(resources.vehicles, { mispar_rechev: number }, 1), query(resources.extra, { mispar_rechev: number }, 1),
     query(resources.history, { mispar_rechev: number }, 1), query(resources.ownership, { mispar_rechev: number }, 100),
     query(resources.openRecalls, { MISPAR_RECHEV: number }, 100),
+    query(resources.disabledParkingTags, { 'MISPAR RECHEV': number }, 1),
     query(resources.canceledRecent, { mispar_rechev: number }, 1), query(resources.canceled2010, { mispar_rechev: plate.padStart(8, '0') }, 1), query(resources.canceled2000, { mispar_rechev: plate.padStart(8, '0') }, 1),
   ]);
   // The inactive datasets are queried only when the active registry answered successfully with no match.
@@ -64,9 +67,24 @@ export async function getVehicleReport(plate: string) {
     ? await Promise.all([query(resources.model, modelFilters, 10), query(resources.prices, modelFilters, 10)])
     : [{ rows: [], error: false }, { rows: [], error: false }];
   return { base, baseSource: vehicle.rows[0] ? 'active' : inactiveWithModel.rows[0] ? 'inactiveWithModel' : inactiveWithoutModel.rows[0] ? 'inactiveWithoutModel' : canceled ? 'canceled' : null,
-    status, inactive, extra: extra.rows[0] ?? null, history: history.rows[0] ?? null, ownership: ownership.rows, openRecalls: openRecalls.rows, canceled, model: model.rows, prices: prices.rows,
-    errors: { vehicle: vehicle.error, inactive: inactiveWithModel.error || inactiveWithoutModel.error, extra: extra.error, history: history.error, ownership: ownership.error, openRecalls: openRecalls.error, canceled: c1.error || c2.error || c3.error, model: model.error, prices: prices.error } };
+    status, inactive, extra: extra.rows[0] ?? null, history: history.rows[0] ?? null, ownership: ownership.rows, openRecalls: openRecalls.rows, disabledParkingTag: disabledParkingTags.rows[0] ?? null, canceled, model: model.rows, prices: prices.rows,
+    errors: { vehicle: vehicle.error, inactive: inactiveWithModel.error || inactiveWithoutModel.error, extra: extra.error, history: history.error, ownership: ownership.error, openRecalls: openRecalls.error, disabledParkingTag: disabledParkingTags.error, canceled: c1.error || c2.error || c3.error, model: model.error, prices: prices.error } };
+}
+export function disabledParkingTagStatus(report: VehicleReport): string {
+  return report.disabledParkingTag ? 'נמצאה רשומה' : report.errors.disabledParkingTag ? 'המאגר לא זמין' : 'לא נמצאה רשומה';
 }
 export function value(row: Row | null, key: string): string { const v = row?.[key]; return v === null || v === undefined || v === '' ? 'לא זמין' : String(v); }
+export function groupOwnership(rows: Row[]) {
+  const groups = new Map<string, { month: string | number | null; kind: string; count: number }>();
+  for (const row of rows) {
+    const month = row.baalut_dt;
+    const kind = value(row, 'baalut').trim();
+    const key = JSON.stringify([month == null ? '' : String(month), kind]);
+    const existing = groups.get(key);
+    if (existing) existing.count += 1;
+    else groups.set(key, { month, kind, count: 1 });
+  }
+  return [...groups.values()].sort((a, b) => Number(b.month) - Number(a.month));
+}
 export function date(value: unknown): string { if (!value) return 'לא זמין'; const s = String(value); if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s.split('-').reverse().join('.'); if (/^\d{6}$/.test(s)) return `${s.slice(4, 6)}.${s.slice(0, 4)}`; return s; }
 export function yesNo(value: unknown): string { return value === 1 || value === '1' ? 'כן' : value === 0 || value === '0' ? 'לא' : 'לא זמין'; }
