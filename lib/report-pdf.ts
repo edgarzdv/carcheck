@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { createPdf, type DocumentBlock } from 'rtl-pdf';
+import { createAccessiblePdf, type AccessibleDocumentBlock } from './accessible-pdf';
 import { date, disabledParkingTagStatus, groupOwnership, value, yesNo, type VehicleReport, type VehicleStatus, type Row } from './vehicles';
 
 const font = path.join(process.cwd(), 'assets/fonts/NotoSansHebrew-Medium.ttf');
@@ -16,12 +16,12 @@ function clean(input: unknown, max = 600): string {
 }
 
 export async function createVehiclePdf(plate: string, report: VehicleReport): Promise<Uint8Array> {
-  const blocks: DocumentBlock[] = [];
-  const text = (content: string, fontSize = 10, color = ink, marginBottom = 4) =>
-    blocks.push({ type: 'text', text: clean(content, 1200), direction: 'rtl', align: 'right', fontSize, color, marginBottom, lineHeight: 1.4 });
-  const heading = (title: string) => {
+  const blocks: AccessibleDocumentBlock[] = [];
+  const text = (content: string, fontSize = 10, color = ink, marginBottom = 4, headingLevel?: 1 | 2 | 3, minFollowingHeight?: number) =>
+    blocks.push({ type: 'text', text: clean(content, 1200), direction: 'rtl', align: 'right', fontSize, color, marginBottom, lineHeight: 1.4, headingLevel, minFollowingHeight });
+  const heading = (title: string, reserve = 80) => {
     blocks.push({ type: 'spacer', height: 10 });
-    text(title, 15, blue, 4);
+    text(title, 15, blue, 4, 2, reserve);
     blocks.push({ type: 'rule', color: '#dce5f4', marginBottom: 8 });
   };
   const field = (label: string, data: unknown) => text(`${label}: ${clean(data)}`, 10, ink, 4);
@@ -29,7 +29,7 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
   const fields = (row: Row, items: [string, string][]) => items.forEach(([key, label]) => field(label, value(row, key)));
 
   text('AUTOPEEK', 25, ink, 1);
-  text(`דוח מידע לרכב ${plate}`, 13, blue, 3);
+  text(`דוח מידע לרכב ${plate}`, 13, blue, 3, 1);
   field('מועד הפקה', new Intl.DateTimeFormat('he-IL', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Jerusalem' }).format(new Date()));
   blocks.push({ type: 'rule', color: '#dce5f4', marginTop: 5 });
   heading('סיכום הבדיקה');
@@ -86,8 +86,6 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
     if (report.base?.baalut) field('סוג בעלות נוכחית במאגר הרכב', value(report.base, 'baalut'));
   }
   note('המאגר כולל סוגי בעלות ותאריכים בלבד, ללא שמות בעלים.');
-  // Give this section room so its heading does not end a page on its own.
-  blocks.push({ type: 'spacer', height: 65 });
   heading('ריקולים שלא בוצעו');
   if (report.openRecalls.length) report.openRecalls.forEach((row) => {
     field('מספר קריאה', value(row,'RECALL_ID'));
@@ -112,7 +110,7 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
     note('התאמה לפי קוד יצרן, קוד דגם ושנת ייצור. נתוני דגם עשויים להשתנות בין רמות גימור.');
   }
   if (report.prices[0]) {
-    heading('מחיר יבואן לרכב חדש');
+    heading('מחיר יבואן לרכב חדש', 130);
     field('מחיר מדווח', `₪${value(report.prices[0],'mehir')}`);
     field('יבואן', value(report.prices[0],'shem_yevuan'));
     field('שנת דגם', value(report.prices[0],'shnat_yitzur'));
@@ -127,5 +125,5 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
   note('מקור הנתונים: מאגרי משרד התחבורה באתר data.gov.il.');
   text('https://data.gov.il/he/organizations/ministry_of_transport', 8, muted, 4);
   note('AUTOPEEK הוא שירות עצמאי, לא אתר ממשלתי. הדוח משקף מידע ציבורי כפי שהתקבל בעת הפקתו; הוא אינו מסמך רשמי, בדיקת תקינות או אישור שווי. היעדר רשומה אינו אישור להיעדר בעיה. לפני רכישה יש לבצע בדיקה מקצועית ולאמת נתונים מול הגורמים המוסמכים.');
-  return createPdf({ fonts: { rtl: font }, metadata: { title: `AUTOPEEK - ${plate}`, author: 'AUTOPEEK', subject: 'דוח מידע ציבורי על רכב', language: 'he' }, page: { size: 'A4', margins: { top: 46, bottom: 46, left: 50, right: 50 } }, defaults: { direction: 'rtl', color: ink }, blocks });
+  return createAccessiblePdf({ fonts: { rtl: font }, metadata: { title: `AUTOPEEK - ${plate}`, author: 'AUTOPEEK', subject: 'דוח מידע ציבורי על רכב', language: 'he-IL' }, page: { size: 'A4', margins: { top: 46, bottom: 46, left: 50, right: 50 } }, defaults: { direction: 'rtl', color: ink }, blocks });
 }

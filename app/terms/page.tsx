@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 import { LegalShell } from '../components/legal-shell';
 
-export const metadata: Metadata = { title: 'תנאי שימוש', description: 'תנאי השימוש ומגבלות המידע של AUTOPEEK', alternates: { canonical: '/terms' } };
+export const metadata: Metadata = pageMetadata('/terms', 'תנאי שימוש', 'תנאי השימוש ומגבלות המידע של AUTOPEEK');
 
 export default function Terms() {
   return <LegalShell title="תנאי שימוש" introduction="עודכן: 8 באוקטובר 2026 · חשוב לקרוא לפני שמסתמכים על תוצאות הבדיקה.">

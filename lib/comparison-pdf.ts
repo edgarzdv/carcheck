@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { createPdf, type DocumentBlock } from 'rtl-pdf';
+import { createAccessiblePdf, type AccessibleDocumentBlock } from './accessible-pdf';
 import { comparisonName, getComparisonGroups, hasComparisonData } from './comparison';
 import type { VehicleReport } from './vehicles';
 
@@ -16,19 +16,19 @@ export async function createComparisonPdf(
   firstPlate: string, firstReport: VehicleReport,
   secondPlate: string, secondReport: VehicleReport,
 ): Promise<Uint8Array> {
-  const blocks: DocumentBlock[] = [];
-  const text = (content: string, fontSize = 10, color = ink, marginBottom = 5) => {
-    blocks.push({ type: 'text', text: clean(content, 600), direction: 'rtl', align: 'right', fontSize, color, marginBottom, lineHeight: 1.4 });
+  const blocks: AccessibleDocumentBlock[] = [];
+  const text = (content: string, fontSize = 10, color = ink, marginBottom = 5, headingLevel?: 1 | 2 | 3, minFollowingHeight?: number) => {
+    blocks.push({ type: 'text', text: clean(content, 600), direction: 'rtl', align: 'right', fontSize, color, marginBottom, lineHeight: 1.4, headingLevel, minFollowingHeight });
   };
   const heading = (title: string) => {
     blocks.push({ type: 'spacer', height: 11 });
-    text(title, 15, blue, 4);
+    text(title, 15, blue, 4, 2, 75);
     blocks.push({ type: 'rule', color: '#dce5f4', marginBottom: 8 });
   };
   const note = (content: string) => text(content, 9, muted, 8);
 
   text('AUTOPEEK', 25, ink, 1);
-  text('דוח השוואת רכבים לפי מספר רישוי', 14, blue, 5);
+  text('דוח השוואת רכבים לפי מספר רישוי', 14, blue, 5, 1);
   text(`רכב ראשון: ${firstPlate} - ${comparisonName(firstReport)}`, 11, ink, 2);
   text(`רכב שני: ${secondPlate} - ${comparisonName(secondReport)}`, 11, ink, 5);
   note(`מועד הפקה: ${new Intl.DateTimeFormat('he-IL', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Jerusalem' }).format(new Date())}`);
@@ -43,15 +43,13 @@ export async function createComparisonPdf(
   });
 
   for (const group of getComparisonGroups(firstReport, secondReport)) {
-    // The document renderer has no keep-with-next block; reserve room before the final section.
-    if (group.title === 'נתוני דגם ומחיר יבואן') blocks.push({ type: 'spacer', height: 70 });
     heading(group.title);
     for (const row of group.rows) {
-      text(row.label, 11, blue, 2);
+      text(row.label, 11, blue, 2, undefined, 75);
       text(`רכב ראשון - ${row.values[0]}`, 10, ink, 1);
       text(`רכב שני - ${row.values[1]}`, 10, ink, 2);
       if (row.hint) text(row.hint, 8, muted, 5);
-      blocks.push({ type: 'rule', color: '#eef1f6', marginBottom: 6 });
+      blocks.push({ type: 'rule', color: '#eef1f6', marginBottom: 4 });
     }
   }
 
@@ -62,9 +60,9 @@ export async function createComparisonPdf(
   text('https://data.gov.il/he/organizations/ministry_of_transport', 8, muted, 7);
   note('AUTOPEEK הוא שירות עצמאי, לא אתר ממשלתי. הדוח אינו מסמך רשמי, אישור רישוי, בדיקת תקינות, אישור על היעדר שעבוד או הערכת שווי. נתוני הדגם עשויים להשתנות בין רמות גימור, ומחיר יבואן לרכב חדש אינו שווי שוק של רכב משומש. יש לאמת נתונים מהותיים מול הגורמים המוסמכים.');
 
-  return createPdf({
+  return createAccessiblePdf({
     fonts: { rtl: font },
-    metadata: { title: `AUTOPEEK - השוואת רכבים ${firstPlate} ${secondPlate}`, author: 'AUTOPEEK', subject: 'השוואת מידע ציבורי על שני רכבים', language: 'he' },
+    metadata: { title: `AUTOPEEK - השוואת רכבים ${firstPlate} ${secondPlate}`, author: 'AUTOPEEK', subject: 'השוואת מידע ציבורי על שני רכבים', language: 'he-IL' },
     page: { size: 'A4', margins: { top: 46, bottom: 46, left: 50, right: 50 } },
     defaults: { direction: 'rtl', color: ink },
     blocks,

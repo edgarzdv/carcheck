@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 import { appraisersSource, getAppraisers, parseAppraiserOffset, parseAppraiserTerm } from '@/lib/appraisers';
 
 type Params = { city?: string | string[]; name?: string | string[]; offset?: string | string[] };
@@ -6,9 +7,7 @@ type Params = { city?: string | string[]; name?: string | string[]; offset?: str
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Params> }): Promise<Metadata> {
   const params = await searchParams;
   return {
-    title: 'חיפוש שמאי רכב מורשים בישראל',
-    description: 'חיפוש שמאי רכב מורשים לפי שם ויישוב במאגר משרד התחבורה, כולל מספר רישיון.',
-    alternates: { canonical: '/appraisers' },
+    ...pageMetadata('/appraisers', 'חיפוש שמאי רכב מורשים בישראל', 'חיפוש שמאי רכב מורשים לפי שם ויישוב במאגר משרד התחבורה, כולל מספר רישיון.'),
     ...(Object.keys(params).length ? { robots: { index: false, follow: true } } : {}),
   };
 }
@@ -27,19 +26,20 @@ export default async function Appraisers({ searchParams }: { searchParams: Promi
   const rawName = typeof params.name === 'string' ? params.name : '';
   const city = rawCity.trim() ? parseAppraiserTerm(rawCity) : null;
   const name = rawName.trim() ? parseAppraiserTerm(rawName) : null;
-  const invalid = Array.isArray(params.city) || Array.isArray(params.name) ||
-    (!!rawCity.trim() && !city) || (!!rawName.trim() && !name);
+  const invalidCity = Array.isArray(params.city) || (!!rawCity.trim() && !city);
+  const invalidName = Array.isArray(params.name) || (!!rawName.trim() && !name);
+  const invalid = invalidCity || invalidName;
   const offset = parseAppraiserOffset(params.offset);
   const result = invalid ? null : await getAppraisers(city, name, offset);
 
   return <>
     <header className="topbar"><div className="topbarInner"><a className="brand" href="/" aria-label="AUTOPEEK — דף הבית"><span className="brandMark">A<span>•</span></span><span>AUTO<span className="brandAccent">PEEK</span></span></a><nav className="topLinks" aria-label="ניווט ראשי"><a className="topLink" href="/">בדיקת רכב</a><a className="topLink" href="/garages">מוסכים מורשים</a></nav></div></header>
-    <main className="pageWrap garagesPage">
+    <main id="main-content" tabIndex={-1} className="pageWrap garagesPage">
       <section className="garagesHero"><span className="eyebrow small">משרד התחבורה · מאגר ציבורי</span><h1>שמאי רכב מורשים</h1><p>חפשו שמאי רכב לפי שם או יישוב ובדקו את מספר הרישיון המופיע במאגר משרד התחבורה.</p>
         <form className="garagesSearch appraisersSearch" action="/appraisers" method="get">
-          <div className="appraisersFields"><label htmlFor="appraiser-name">שם או מילת חיפוש<input id="appraiser-name" name="name" type="search" maxLength={50} placeholder="למשל: כהן" defaultValue={name ?? rawName}/></label><label htmlFor="appraiser-city">יישוב<input id="appraiser-city" name="city" type="search" maxLength={50} placeholder="למשל: חיפה" defaultValue={city ?? rawCity} autoComplete="address-level2"/></label><button type="submit">חיפוש שמאים ←</button></div>
+          <div className="appraisersFields"><label htmlFor="appraiser-name">שם או מילת חיפוש<input id="appraiser-name" name="name" type="search" maxLength={50} placeholder="למשל: כהן" defaultValue={name ?? rawName} aria-invalid={invalidName || undefined} aria-describedby={invalidName ? 'appraiser-error' : undefined}/></label><label htmlFor="appraiser-city">יישוב<input id="appraiser-city" name="city" type="search" maxLength={50} placeholder="למשל: חיפה" defaultValue={city ?? rawCity} autoComplete="address-level2" aria-invalid={invalidCity || undefined} aria-describedby={invalidCity ? 'appraiser-error' : undefined}/></label><button type="submit">חיפוש שמאים ←</button></div>
         </form>
-        {invalid && <p className="formError" role="alert">אפשר לחפש בשם או ביישוב באורך של 2–50 תווים, ללא סימנים מיוחדים.</p>}
+        {invalid && <p className="formError" id="appraiser-error" role="alert">אפשר לחפש בשם או ביישוב באורך של 2–50 תווים, ללא סימנים מיוחדים.</p>}
       </section>
       <section className="garagesResults" aria-label="רשימת השמאים"><div className="garagesResultsHead"><div><h2>{city ? `שמאי רכב ב${city}` : 'רשימת שמאי הרכב'}</h2><p>הרשימה מבוססת על המאגר הרשמי ומתעדכנת לפי הפרסום בו.</p></div></div>
         {result?.error && <div className="notice warning" role="status">מאגר השמאים אינו זמין כרגע. נסו שוב מאוחר יותר.</div>}

@@ -9,9 +9,10 @@ const nextConfig: NextConfig = {
       { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
     ] }];
   },
-  serverExternalPackages: ['rtl-pdf'],
+  serverExternalPackages: ['rtl-pdf', 'pdfkit'],
   outputFileTracingIncludes: {
     '/api/report': ['./assets/fonts/NotoSansHebrew-Medium.ttf', './node_modules/.pnpm/pdfkit@*/node_modules/pdfkit/js/data/*'],
+    '/api/compare-report': ['./assets/fonts/NotoSansHebrew-Medium.ttf', './node_modules/.pnpm/pdfkit@*/node_modules/pdfkit/js/data/*'],
   },
 };
 

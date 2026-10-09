@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 import { garagesSource, getGarages, parseGarageCity, parseGarageOffset, type Garage } from '@/lib/garages';
 
 type Params = { city?: string | string[]; offset?: string | string[]; trail?: string | string[] };
@@ -6,9 +7,7 @@ type Params = { city?: string | string[]; offset?: string | string[]; trail?: st
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Params> }): Promise<Metadata> {
   const params = await searchParams;
   return {
-    title: 'מוסכים מורשים בישראל לפי עיר',
-    description: 'רשימת מוסכים מורשים ממאגר משרד התחבורה. חיפוש לפי עיר, כתובת, טלפון, מספר רישיון ומקצועות שהמוסך מורשה לבצע.',
-    alternates: { canonical: '/garages' },
+    ...pageMetadata('/garages', 'מוסכים מורשים בישראל לפי עיר', 'רשימת מוסכים מורשים ממאגר משרד התחבורה. חיפוש לפי עיר, כתובת, טלפון, מספר רישיון ומקצועות שהמוסך מורשה לבצע.'),
     ...(params.city !== undefined || params.offset !== undefined ? { robots: { index: false, follow: true } } : {}),
   };
 }
@@ -51,11 +50,11 @@ export default async function Garages({ searchParams }: { searchParams: Promise<
 
   return <>
     <header className="topbar"><div className="topbarInner"><a className="brand" href="/" aria-label="AUTOPEEK — דף הבית"><span className="brandMark">A<span>•</span></span><span>AUTO<span className="brandAccent">PEEK</span></span></a><nav className="topLinks" aria-label="ניווט ראשי"><a className="topLink" href="/">בדיקת רכב</a><a className="topLink" href="/compare">השוואה</a></nav></div></header>
-    <main className="pageWrap garagesPage">
+    <main id="main-content" tabIndex={-1} className="pageWrap garagesPage">
       <section className="garagesHero"><span className="eyebrow small">משרד התחבורה · מאגר ציבורי</span><h1>מוסכים מורשים בישראל</h1><p>חפשו מוסך לפי עיר וראו כתובת, טלפון, מספר רישיון ומקצועות מורשים. הרשימה מציגה מוסכים שסווגו במאגר משרד התחבורה כ״מוסך מורשה״.</p>
-        <form className="garagesSearch" action="/garages" method="get"><label htmlFor="garage-city">חיפוש לפי עיר</label><div><input id="garage-city" name="city" type="search" maxLength={50} placeholder="למשל: חיפה" defaultValue={city ?? rawCity} autoComplete="address-level2"/><button type="submit">חיפוש מוסכים ←</button></div></form>
+        <form className="garagesSearch" action="/garages" method="get"><label htmlFor="garage-city">חיפוש לפי עיר</label><div><input id="garage-city" name="city" type="search" maxLength={50} placeholder="למשל: חיפה" defaultValue={city ?? rawCity} autoComplete="address-level2" aria-invalid={invalidCity || undefined} aria-describedby={invalidCity ? 'garage-city-error' : undefined}/><button type="submit">חיפוש מוסכים ←</button></div></form>
         <nav className="citySuggestions" aria-label="ערים נפוצות"><span>ערים נפוצות:</span>{popularCities.map(name => <a key={name} href={listingUrl(name)}>{name}</a>)}</nav>
-        {invalidCity && <p className="formError" role="alert">יש להזין שם עיר תקין באורך של עד 50 תווים.</p>}
+        {invalidCity && <p className="formError" id="garage-city-error" role="alert">יש להזין שם עיר תקין באורך של עד 50 תווים.</p>}
       </section>
       <section className="garagesResults" aria-label="רשימת המוסכים">
         <div className="garagesResultsHead"><div><h2>{city ? `מוסכים מורשים ב${city}` : 'רשימת מוסכים מורשים'}</h2><p>כל מוסך מוצג פעם אחת בעמוד, גם אם הוא מורשה למספר מקצועות.</p></div></div>

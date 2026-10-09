@@ -68,7 +68,7 @@ export function AnalyticsConsent({ measurementId }: { measurementId: string }) {
         setLoaded(true);
       }}
     />}
-    {showChoice && <div className="analyticsConsent" role="dialog" aria-label="בחירת מדידת שימוש">
+    {showChoice && <div className="analyticsConsent" role="region" aria-label="בחירת מדידת שימוש">
       <p>נוכל למדוד ביקורים באתר באמצעות Google Analytics, בלי לשלוח מספרי רישוי שבכתובת העמוד. המדידה תתחיל רק אם תאשרו. <a href="/privacy">פרטים במדיניות הפרטיות</a></p>
       <div><button type="button" onClick={() => choose('accepted')}>אישור מדידה</button><button type="button" onClick={() => choose('rejected')}>ללא מדידה</button></div>
     </div>}
