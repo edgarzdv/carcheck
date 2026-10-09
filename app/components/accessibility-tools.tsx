@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 type Preferences = { textSize: 0 | 1 | 2; contrast: boolean; links: boolean; reduceMotion: boolean };
-const storageKey = 'autopeek-accessibility-preferences';
+const storageKey = 'rehevnet-accessibility-preferences';
 const defaults: Preferences = { textSize: 0, contrast: false, links: false, reduceMotion: false };
 
 export function AccessibilityTools() {

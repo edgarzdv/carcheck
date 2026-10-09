@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { pageMetadata } from '@/lib/seo';
 import { LegalShell } from '../components/legal-shell';
 
-export const metadata: Metadata = pageMetadata('/privacy', 'פרטיות', 'איך AUTOPEEK מעבד מספרי רישוי, פניות ונתוני שימוש באתר');
+export const metadata: Metadata = pageMetadata('/privacy', 'פרטיות', 'איך RehevNet מעבד מספרי רישוי, פניות ונתוני שימוש באתר');
 
 export default function Privacy() {
   return <LegalShell title="פרטיות" introduction="עודכן: 8 באוקטובר 2026 · הסבר על המידע שעובר בעת שימוש באתר.">

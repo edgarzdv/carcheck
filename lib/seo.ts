@@ -5,7 +5,7 @@ export function pageMetadata(path: string, title: string, description: string): 
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { title: `${title} | AUTOPEEK`, description, url: path, siteName: 'AUTOPEEK', locale: 'he_IL', type: 'website' },
-    twitter: { card: 'summary', title: `${title} | AUTOPEEK`, description },
+    openGraph: { title: `${title} | RehevNet`, description, url: path, siteName: 'RehevNet', locale: 'he_IL', type: 'website' },
+    twitter: { card: 'summary', title: `${title} | RehevNet`, description },
   };
 }

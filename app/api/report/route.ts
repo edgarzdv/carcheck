@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     headers: {
       'X-Robots-Tag': 'noindex',
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="AUTOPEEK-${plate}.pdf"`,
+      'Content-Disposition': `attachment; filename="RehevNet-${plate}.pdf"`,
       'Content-Length': String(pdf.length),
       'Cache-Control': 'private, no-store',
       'X-Content-Type-Options': 'nosniff',

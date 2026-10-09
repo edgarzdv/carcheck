@@ -27,7 +27,7 @@ export async function createComparisonPdf(
   };
   const note = (content: string) => text(content, 9, muted, 8);
 
-  text('AUTOPEEK', 25, ink, 1);
+  text('RehevNet', 25, ink, 1);
   text('דוח השוואת רכבים לפי מספר רישוי', 14, blue, 5, 1);
   text(`רכב ראשון: ${firstPlate} - ${comparisonName(firstReport)}`, 11, ink, 2);
   text(`רכב שני: ${secondPlate} - ${comparisonName(secondReport)}`, 11, ink, 5);
@@ -58,11 +58,11 @@ export async function createComparisonPdf(
   heading('מקורות והבהרות');
   note('מקור הנתונים: מאגרי משרד התחבורה באתר data.gov.il.');
   text('https://data.gov.il/he/organizations/ministry_of_transport', 8, muted, 7);
-  note('AUTOPEEK הוא שירות עצמאי, לא אתר ממשלתי. הדוח אינו מסמך רשמי, אישור רישוי, בדיקת תקינות, אישור על היעדר שעבוד או הערכת שווי. נתוני הדגם עשויים להשתנות בין רמות גימור, ומחיר יבואן לרכב חדש אינו שווי שוק של רכב משומש. יש לאמת נתונים מהותיים מול הגורמים המוסמכים.');
+  note('RehevNet הוא שירות עצמאי, לא אתר ממשלתי. הדוח אינו מסמך רשמי, אישור רישוי, בדיקת תקינות, אישור על היעדר שעבוד או הערכת שווי. נתוני הדגם עשויים להשתנות בין רמות גימור, ומחיר יבואן לרכב חדש אינו שווי שוק של רכב משומש. יש לאמת נתונים מהותיים מול הגורמים המוסמכים.');
 
   return createAccessiblePdf({
     fonts: { rtl: font },
-    metadata: { title: `AUTOPEEK - השוואת רכבים ${firstPlate} ${secondPlate}`, author: 'AUTOPEEK', subject: 'השוואת מידע ציבורי על שני רכבים', language: 'he-IL' },
+    metadata: { title: `RehevNet - השוואת רכבים ${firstPlate} ${secondPlate}`, author: 'RehevNet', subject: 'השוואת מידע ציבורי על שני רכבים', language: 'he-IL' },
     page: { size: 'A4', margins: { top: 46, bottom: 46, left: 50, right: 50 } },
     defaults: { direction: 'rtl', color: ink },
     blocks,

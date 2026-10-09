@@ -1,1 +1,1 @@
-export const siteUrl = new URL(process.env.SITE_URL || 'https://autopeek.co.il');
+export const siteUrl = new URL(process.env.SITE_URL || 'https://rehevnet.co.il');

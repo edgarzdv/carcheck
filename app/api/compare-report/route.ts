@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     headers: {
       'X-Robots-Tag': 'noindex',
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="AUTOPEEK-compare-${first}-${second}.pdf"`,
+      'Content-Disposition': `attachment; filename="RehevNet-compare-${first}-${second}.pdf"`,
       'Content-Length': String(pdf.length),
       'Cache-Control': 'private, no-store',
       'X-Content-Type-Options': 'nosniff',

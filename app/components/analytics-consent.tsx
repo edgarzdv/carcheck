@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 
-const consentKey = 'autopeek-analytics-consent';
+const consentKey = 'rehevnet-analytics-consent';
 type Consent = 'accepted' | 'rejected' | null;
 
 declare global {

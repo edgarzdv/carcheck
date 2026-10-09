@@ -37,7 +37,7 @@ export default async function Compare({ searchParams }: { searchParams: Promise<
   const groups = left && right ? getComparisonGroups(left, right) : [];
 
   return <>
-    <header className="topbar"><div className="topbarInner"><a className="brand" href="/" aria-label="AUTOPEEK — דף הבית"><span className="brandMark">A<span>•</span></span><span>AUTO<span className="brandAccent">PEEK</span></span></a><a className="topLink" href="/">חזרה לחיפוש ←</a></div></header>
+    <header className="topbar"><div className="topbarInner"><a className="brand" href="/" aria-label="RehevNet — דף הבית"><span className="brandMark">R<span>•</span></span><span>Rehev<span className="brandAccent">Net</span></span></a><a className="topLink" href="/">חזרה לחיפוש ←</a></div></header>
     <main id="main-content" tabIndex={-1} className="pageWrap comparePage">
       <section className="compareHero"><span className="eyebrow small">לפני קנייה</span><h1>השוואת שני רכבים</h1><p>הזינו שני מספרי רישוי ישראליים וראו את הנתונים הציבוריים זה לצד זה. הנתונים עוזרים לשאול שאלות טובות יותר; הם אינם קובעים איזה רכב כדאי לקנות.</p>
         <form className="compareForm" action="/compare" method="get">
@@ -50,7 +50,7 @@ export default async function Compare({ searchParams }: { searchParams: Promise<
       </section>
       {reports && <section className="compareResults" aria-label="תוצאות ההשוואה">
         <div className="compareIntro"><h2>תוצאות ההשוואה</h2><p>ההשוואה מבוססת על הרשומות שהתקבלו כעת. מידע חסר או היעדר ריקול אינם אישור לתקינות הרכב.</p></div>
-        {reports.some(hasComparisonData) && <div className="compareActions"><a className="downloadButton" href={`/api/compare-report?first=${encodeURIComponent(first!)}&second=${encodeURIComponent(second!)}`} download={`AUTOPEEK-compare-${first}-${second}.pdf`}>↓ הורדת דוח השוואה PDF</a><span>הדוח משקף את המידע שהתקבל בזמן ההפקה.</span></div>}
+        {reports.some(hasComparisonData) && <div className="compareActions"><a className="downloadButton" href={`/api/compare-report?first=${encodeURIComponent(first!)}&second=${encodeURIComponent(second!)}`} download={`RehevNet-compare-${first}-${second}.pdf`}>↓ הורדת דוח השוואה PDF</a><span>הדוח משקף את המידע שהתקבל בזמן ההפקה.</span></div>}
         <div className="compareColumnHeads"><span>נתון</span>{[first!, second!].map((plate, i) => <div key={plate}><strong>{i === 0 ? 'רכב ראשון' : 'רכב שני'}</strong><span dir="ltr">{plate}</span><small>{comparisonName(reports[i])}</small><a href={`/?plate=${encodeURIComponent(plate)}`}>לדוח המלא ←</a></div>)}</div>
         {reports.some(report => !hasComparisonData(report)) && <div className="notice warning compareNotice" role="status">{reports.map((report, i) => !hasComparisonData(report) ? <p key={i}>לרכב {i === 0 ? 'הראשון' : 'השני'} ({i === 0 ? first : second}) {Object.values(report.errors).some(Boolean) ? 'לא התקבלו נתונים וחלק מהמאגרים אינם זמינים כרגע. כדאי לנסות שוב מאוחר יותר.' : 'לא נמצאה רשומה במאגרים שנבדקו. ייתכן שמספר הרישוי מחוץ לטווח הכיסוי.'}</p> : null)} אין להסיק מהיעדר נתונים שהרכב תקין.</div>}
         {bothFound && <p className="compareHint">הבדלים מוצגים לצורך עיון בלבד. הנתונים עשויים להגיע ממאגרים בעלי כיסוי ומועדי עדכון שונים.</p>}
@@ -58,6 +58,6 @@ export default async function Compare({ searchParams }: { searchParams: Promise<
         <section className="compareNext"><h2>לפני שמחליטים</h2><p>השוו את הפרטים לרישיונות הרכב ולרכבים עצמם, בדקו שעבודים ודיווח גניבה בשירותים הרשמיים, ובררו ריקולים מול היבואן. כדאי לבצע בדיקה מקצועית לשני הרכבים.</p><a href="/guide">למדריך לבדיקת רכב לפני קנייה ←</a></section>
       </section>}
     </main>
-    <footer><div className="footerInner"><div className="footerBrand"><strong>AUTOPEEK</strong><span>© 2026 · שירות מידע עצמאי לרכב</span></div><nav className="footerLinks" aria-label="קישורי האתר"><a href="/">בדיקת רכב</a><a href="/garages">מוסכים מורשים</a><a href="/appraisers">שמאי רכב</a><a href="/guide">מדריך לבדיקה</a><a href="/terms">תנאי שימוש</a><a href="/privacy">פרטיות</a><a href="/accessibility">נגישות</a><a href="/contact">יצירת קשר</a></nav><p className="footerSource">מקור הנתונים: <a href="https://data.gov.il/he/organizations/ministry_of_transport" target="_blank" rel="noopener noreferrer">מאגרי משרד התחבורה באתר data.gov.il ↗</a></p></div></footer>
+    <footer><div className="footerInner"><div className="footerBrand"><strong>RehevNet</strong><span>© 2026 · שירות מידע עצמאי לרכב</span></div><nav className="footerLinks" aria-label="קישורי האתר"><a href="/">בדיקת רכב</a><a href="/garages">מוסכים מורשים</a><a href="/appraisers">שמאי רכב</a><a href="/guide">מדריך לבדיקה</a><a href="/terms">תנאי שימוש</a><a href="/privacy">פרטיות</a><a href="/accessibility">נגישות</a><a href="/contact">יצירת קשר</a></nav><p className="footerSource">מקור הנתונים: <a href="https://data.gov.il/he/organizations/ministry_of_transport" target="_blank" rel="noopener noreferrer">מאגרי משרד התחבורה באתר data.gov.il ↗</a></p></div></footer>
   </>;
 }

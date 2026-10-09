@@ -28,7 +28,7 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
   const note = (message: string) => text(message, 9, muted, 8);
   const fields = (row: Row, items: [string, string][]) => items.forEach(([key, label]) => field(label, value(row, key)));
 
-  text('AUTOPEEK', 25, ink, 1);
+  text('RehevNet', 25, ink, 1);
   text(`דוח מידע לרכב ${plate}`, 13, blue, 3, 1);
   field('מועד הפקה', new Intl.DateTimeFormat('he-IL', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Jerusalem' }).format(new Date()));
   blocks.push({ type: 'rule', color: '#dce5f4', marginTop: 5 });
@@ -124,6 +124,6 @@ export async function createVehiclePdf(plate: string, report: VehicleReport): Pr
   heading('מקורות והבהרות');
   note('מקור הנתונים: מאגרי משרד התחבורה באתר data.gov.il.');
   text('https://data.gov.il/he/organizations/ministry_of_transport', 8, muted, 4);
-  note('AUTOPEEK הוא שירות עצמאי, לא אתר ממשלתי. הדוח משקף מידע ציבורי כפי שהתקבל בעת הפקתו; הוא אינו מסמך רשמי, בדיקת תקינות או אישור שווי. היעדר רשומה אינו אישור להיעדר בעיה. לפני רכישה יש לבצע בדיקה מקצועית ולאמת נתונים מול הגורמים המוסמכים.');
-  return createAccessiblePdf({ fonts: { rtl: font }, metadata: { title: `AUTOPEEK - ${plate}`, author: 'AUTOPEEK', subject: 'דוח מידע ציבורי על רכב', language: 'he-IL' }, page: { size: 'A4', margins: { top: 46, bottom: 46, left: 50, right: 50 } }, defaults: { direction: 'rtl', color: ink }, blocks });
+  note('RehevNet הוא שירות עצמאי, לא אתר ממשלתי. הדוח משקף מידע ציבורי כפי שהתקבל בעת הפקתו; הוא אינו מסמך רשמי, בדיקת תקינות או אישור שווי. היעדר רשומה אינו אישור להיעדר בעיה. לפני רכישה יש לבצע בדיקה מקצועית ולאמת נתונים מול הגורמים המוסמכים.');
+  return createAccessiblePdf({ fonts: { rtl: font }, metadata: { title: `RehevNet - ${plate}`, author: 'RehevNet', subject: 'דוח מידע ציבורי על רכב', language: 'he-IL' }, page: { size: 'A4', margins: { top: 46, bottom: 46, left: 50, right: 50 } }, defaults: { direction: 'rtl', color: ink }, blocks });
 }

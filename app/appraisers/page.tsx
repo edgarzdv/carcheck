@@ -33,7 +33,7 @@ export default async function Appraisers({ searchParams }: { searchParams: Promi
   const result = invalid ? null : await getAppraisers(city, name, offset);
 
   return <>
-    <header className="topbar"><div className="topbarInner"><a className="brand" href="/" aria-label="AUTOPEEK — דף הבית"><span className="brandMark">A<span>•</span></span><span>AUTO<span className="brandAccent">PEEK</span></span></a><nav className="topLinks" aria-label="ניווט ראשי"><a className="topLink" href="/">בדיקת רכב</a><a className="topLink" href="/garages">מוסכים מורשים</a></nav></div></header>
+    <header className="topbar"><div className="topbarInner"><a className="brand" href="/" aria-label="RehevNet — דף הבית"><span className="brandMark">R<span>•</span></span><span>Rehev<span className="brandAccent">Net</span></span></a><nav className="topLinks" aria-label="ניווט ראשי"><a className="topLink" href="/">בדיקת רכב</a><a className="topLink" href="/garages">מוסכים מורשים</a></nav></div></header>
     <main id="main-content" tabIndex={-1} className="pageWrap garagesPage">
       <section className="garagesHero"><span className="eyebrow small">משרד התחבורה · מאגר ציבורי</span><h1>שמאי רכב מורשים</h1><p>חפשו שמאי רכב לפי שם או יישוב ובדקו את מספר הרישיון המופיע במאגר משרד התחבורה.</p>
         <form className="garagesSearch appraisersSearch" action="/appraisers" method="get">
@@ -48,6 +48,6 @@ export default async function Appraisers({ searchParams }: { searchParams: Promi
       </section>
       <section className="garagesNote"><h2>לפני שפונים לשמאי</h2><p>המאגר מציג שם, יישוב ומספר רישיון בלבד. הוא אינו כולל פרטי קשר, זמינות או המלצה על שירות. פרטי הרישוי עשויים להשתנות; כדאי לאמת אותם מול משרד התחבורה לפני הזמנת עבודה.</p></section>
     </main>
-    <footer><div className="footerInner"><div className="footerBrand"><strong>AUTOPEEK</strong><span>© 2026 · שירות מידע עצמאי לרכב</span></div><nav className="footerLinks" aria-label="קישורי האתר"><a href="/">בדיקת רכב</a><a href="/compare">השוואת רכבים</a><a href="/garages">מוסכים מורשים</a><a href="/appraisers">שמאי רכב</a><a href="/guide">מדריך לבדיקה</a><a href="/terms">תנאי שימוש</a><a href="/privacy">פרטיות</a><a href="/accessibility">נגישות</a><a href="/contact">יצירת קשר</a></nav><p className="footerSource">מקור רשימת השמאים: <a href={appraisersSource} target="_blank" rel="noopener noreferrer">מאגר שמאי רכב באתר data.gov.il ↗</a> · רישיון CC BY</p></div></footer>
+    <footer><div className="footerInner"><div className="footerBrand"><strong>RehevNet</strong><span>© 2026 · שירות מידע עצמאי לרכב</span></div><nav className="footerLinks" aria-label="קישורי האתר"><a href="/">בדיקת רכב</a><a href="/compare">השוואת רכבים</a><a href="/garages">מוסכים מורשים</a><a href="/appraisers">שמאי רכב</a><a href="/guide">מדריך לבדיקה</a><a href="/terms">תנאי שימוש</a><a href="/privacy">פרטיות</a><a href="/accessibility">נגישות</a><a href="/contact">יצירת קשר</a></nav><p className="footerSource">מקור רשימת השמאים: <a href={appraisersSource} target="_blank" rel="noopener noreferrer">מאגר שמאי רכב באתר data.gov.il ↗</a> · רישיון CC BY</p></div></footer>
   </>;
 }

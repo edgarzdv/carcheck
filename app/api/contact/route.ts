@@ -63,8 +63,8 @@ export async function POST(request: Request) {
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: `AUTOPEEK <${from}>`, to: [to], reply_to: email,
-        subject: `AUTOPEEK | ${topic}`,
+        from: `RehevNet <${from}>`, to: [to], reply_to: email,
+        subject: `RehevNet | ${topic}`,
         text: `נושא: ${topic}\nשם: ${name}\nכתובת להשבה: ${email}\n\n${message}`,
       }),
       signal: AbortSignal.timeout(10000),

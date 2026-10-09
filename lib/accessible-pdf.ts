@@ -60,7 +60,7 @@ function drawLine(doc: PDFKit.PDFDocument, text: string, left: number, top: numb
 
 export async function createAccessiblePdf(options: Options): Promise<Uint8Array> {
   const margins = { ...defaultMargins, ...options.page?.margins };
-  const info: Record<string, string> = { Title: options.metadata?.title ?? 'AUTOPEEK', Author: options.metadata?.author ?? 'AUTOPEEK' };
+  const info: Record<string, string> = { Title: options.metadata?.title ?? 'RehevNet', Author: options.metadata?.author ?? 'RehevNet' };
   if (options.metadata?.subject) info.Subject = options.metadata.subject;
   if (options.metadata?.keywords?.length) info.Keywords = options.metadata.keywords.join(', ');
   const doc = new PDFDocument({
