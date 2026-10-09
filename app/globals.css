@@ -231,9 +231,9 @@ footer{height:auto;max-width:none;padding:0;background:#fff}
 .analyticsSettings{font-size:12px;min-height:36px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
-.accessibilityTrigger{position:fixed;z-index:1100;right:16px;bottom:16px;width:52px;height:52px;display:grid;place-items:center;border:2px solid #fff;border-radius:50%;background:#0c3f9e;color:#fff;box-shadow:0 5px 20px #0c183155;cursor:pointer;font-size:28px;line-height:1}
+.accessibilityTrigger{position:fixed;z-index:1100;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));width:52px;height:52px;display:grid;place-items:center;border:2px solid #fff;border-radius:50%;background:#0c3f9e;color:#fff;box-shadow:0 5px 20px #0c183155;cursor:pointer;font-size:28px;line-height:1}
 .accessibilityTrigger:hover{background:#082c70}
-.accessibilityPanel{position:fixed;z-index:1101;right:16px;bottom:78px;width:min(360px,calc(100vw - 32px));max-height:min(640px,calc(100dvh - 98px));overflow:auto;padding:20px;background:#fff;color:#0c1831;border:1px solid #b7c5db;border-radius:16px;box-shadow:0 16px 50px #0c183144;line-height:1.6}
+.accessibilityPanel{position:fixed;z-index:1101;right:16px;bottom:calc(138px + env(safe-area-inset-bottom));width:min(360px,calc(100vw - 32px));max-height:min(640px,calc(100dvh - 154px - env(safe-area-inset-bottom)));overflow:auto;padding:20px;background:#fff;color:#0c1831;border:1px solid #b7c5db;border-radius:16px;box-shadow:0 16px 50px #0c183144;line-height:1.6}
 .accessibilityPanelHead,.accessibilityPanelFoot{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .accessibilityPanelHead h2{font-size:20px;margin:0}
 .accessibilityPanelHead button{width:36px;height:36px;border:1px solid #b7c5db;border-radius:8px;background:#fff;color:#0c1831;font-size:26px;line-height:1;cursor:pointer}
