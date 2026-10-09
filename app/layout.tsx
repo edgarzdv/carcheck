@@ -11,4 +11,4 @@ export const metadata: Metadata = {
   openGraph: { title: 'בדיקת רכב לפי מספר רישוי בישראל | RehevNet', description: 'מידע ציבורי על רכב בישראל, במקום אחד, לפני שמחליטים.', siteName: 'RehevNet', locale: 'he_IL', type: 'website', url: siteUrl.toString() },
   twitter: { card: 'summary', title: 'בדיקת רכב לפי מספר רישוי בישראל | RehevNet', description: 'בדקו מה פורסם על הרכב במאגרים ציבוריים בישראל.' },
 };
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="he" dir="rtl"><body suppressHydrationWarning><a className="skipLink" href="#main-content">דילוג לתוכן הראשי</a>{children}<AnalyticsConsent measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-2Z4XZJ6FQM'}/><AccessibilityTools/></body></html>; }
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="he" dir="rtl"><body suppressHydrationWarning><a className="skipLink" href="#main-content">דילוג לתוכן הראשי</a>{children}<AnalyticsConsent measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-ZDQ0KVRQWY'}/><AccessibilityTools/></body></html>; }
